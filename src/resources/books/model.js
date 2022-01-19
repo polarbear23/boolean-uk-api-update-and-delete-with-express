@@ -42,6 +42,29 @@ function Book() {
 
     mockData();
   });
+
+  function createOneBook(book) {
+    const createBook = `
+    INSERT INTO books
+    (title, type, author, topic, publicationDate)
+  VALUES
+    ($1, $2, $3, $4, $5)`
+
+    return db.query(createBook, [book.title, book.type, book.author, book.topic, book.publicationDate])
+      .then((result) => result.rows[0])
+      .catch(console.error)
+  }
+
+  return {
+    createOneBook
+  }
 }
 
 module.exports = Book;
+
+
+/*
+curl -X POST -H "Content-Type: application/json" \
+-d '{"title": "bob goes to school", "type": "dogerbook", "author": "king doge", "topic": "types of Doge", "publicationDate":"2017-10-04"}' \
+ http://localhost:3030/books
+*/
