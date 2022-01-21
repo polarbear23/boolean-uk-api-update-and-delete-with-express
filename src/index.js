@@ -32,7 +32,6 @@ app.get("*", (req, res) => {
 /* START SERVER */
 
 const port = 3030;
-
 app.listen(port, () => {
   db.connect((error) => {
     if (error) {
@@ -40,8 +39,8 @@ app.listen(port, () => {
     } else {
       console.log("\n[DB] Connected...\n");
 
-      Book();
-      Pet();
+      Book().init();
+      Pet().init();
     }
   });
 

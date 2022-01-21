@@ -37,11 +37,13 @@ function Pet() {
     });
   }
 
-  createTable().then(() => {
-    console.log("\nCreating mock data for Pets...\n");
+  const init = () => {
+    createTable().then(() => {
+      console.log("\nCreating mock data for Pets...\n");
 
-    mockData();
-  });
+      mockData();
+    });
+  }
 
   const createOnePet = (pet) => {
     const createPet = `
@@ -55,9 +57,68 @@ function Pet() {
       .then((result) => result.rows[0])
       .catch(console.error);
   }
+  const getTypes = (res) => {
+    const getTypesSQL = `
+    SELECT DISTINCT type FROM Pets
+    `
+    return db
+      .query(getTypesSQL)
+      .then((result) => result.rows)
+      .catch(console.error);
+  }
+  const getAllPets = (res) => {
+    const getAllSQL = `
+    SELECT * FROM Pets
+    `
+    return db
+      .query(getAllSQL)
+      .then((result) => result.rows)
+      .catch(console.error);
+  }
+
+
+  const getAllByMicrochip = (req, res) => {
+    const getAllByMicrochipSQL = `
+    SELECT * FROM Pets
+    WHERE Microchip = $1
+    `
+    return db
+      .query(getAllByMicrochipSQL, [req.query.microchip])
+      .then((result) => result.rows)
+      .catch(console.error);
+  }
+
+  const getPetsByTypeAndMicrochip = (req, res) => {
+    const getPetsByTypeAndMicrochipSQL = `
+    SELECT * FROM Pets
+    WHERE type = $1 AND microchip = $2
+    `
+    return db
+      .query(getPetsByTypeAndMicrochipSQL, [req.params.type, req.query.microchip])
+      .then((result) => result.rows)
+      .catch(console.error);
+  }
+
+
+  const getPetsByType = (req, res) => {
+    const getPetsByTypeSQL = `
+    SELECT * FROM Pets
+    WHERE type = $1
+    `
+    return db
+      .query(getPetsByTypeSQL, [req.params.type])
+      .then((result) => result.rows)
+      .catch(console.error);
+  }
 
   return {
-    createOnePet
+    init,
+    createOnePet,
+    getTypes,
+    getAllPets,
+    getAllByMicrochip,
+    getPetsByType,
+    getPetsByTypeAndMicrochip
 
   }
 }
