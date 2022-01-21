@@ -57,6 +57,51 @@ function Pet() {
       .then((result) => result.rows[0])
       .catch(console.error);
   }
+
+  const updatePetById = (pet) => {
+    const updatePetByIdSQL = `
+    UPDATE pets
+    SET name = $2,
+    age = $3,
+    type = $4,
+    breed = $5,
+    microchip = $6
+    WHERE id = $1
+    RETURNING *;
+    `
+    return db
+      .query(updatePetByIdSQL, [pet.id, pet.name, pet.age, pet.type, pet.breed, pet.microchip])
+      .then((result) => result[0])
+      .catch(console.error);
+  }
+
+  const updatePetByName = (pet) => {
+    const updatePetByNameSQL = `
+    UPDATE pets
+    SET age = $2,
+    type = $3,
+    breed = $4,
+    microchip = $5
+    WHERE name = $1
+    RETURNING *;
+    `
+    return db
+      .query(updatePetByNameSQL, [pet.name, pet.age, pet.type, pet.breed, pet.microchip])
+      .then((result) => result.rows[0])
+      .catch(console.error);
+  }
+
+
+  const deletePetById = (idOfPet) => {
+    const deletePetByIdSQL = `
+    DELETE FROM Pets
+    WHERE id = $1`
+
+    return db.query(deletePetByIdSQL, [idOfPet])
+      .then(result => result.rows[0])
+      .catch(console.error)
+  }
+
   const getTypes = (res) => {
     const getTypesSQL = `
     SELECT DISTINCT type FROM Pets
@@ -118,7 +163,10 @@ function Pet() {
     getAllPets,
     getAllByMicrochip,
     getPetsByType,
-    getPetsByTypeAndMicrochip
+    getPetsByTypeAndMicrochip,
+    updatePetById,
+    deletePetById,
+    updatePetByName
 
   }
 }
@@ -138,3 +186,5 @@ module.exports = Pet;
         type      VARCHAR(255)   NOT NULL,
         breed     VARCHAR(255)   NOT NULL,
         microchip BOOLEAN       NOT NULL*/
+
+/*  curl -X PUT -H "Content-Type: application/json" -d '{"name":"bob","age":14,"type":"cat","breed":"Turkish Angora","microchip":false}' http://localhost:3030/pets/1 */

@@ -57,6 +57,52 @@ VALUES
       .catch(console.error)
   }
 
+  const updateBookById = (book) => {
+    const updateBookByIdSQL = `
+    UPDATE books
+    SET title = $2,
+    type = $3,
+    author = $4,
+    topic = $5,
+    publicationDate = $6
+    WHERE id = $1
+    RETURNING *;
+    `
+    console.log("updateById Book:", book);
+
+    return db
+      .query(updateBookByIdSQL, [book.id, book.title, book.type, book.author, book.topic, book.publicationdate])
+      .then((result) => result.rows[0])
+      .catch(console.error);
+  }
+
+
+  const deleteBookById = (idOfBook) => {
+    const deleteBookByIdSQL = `
+    DELETE FROM books
+    WHERE id = $1`
+
+    return db.query(deleteBookByIdSQL, [idOfBook])
+      .then(result => result.rows[0])
+      .catch(console.error)
+  }
+
+  const updateBookByTitle = (book) => {
+    const updateBookByTitleSQL = `
+    UPDATE books
+    SET type = $2,
+    author = $3,
+    topic = $4,
+    publicationDate = $5
+    WHERE title = $1
+    RETURNING *;
+    `
+    return db
+      .query(updateBookByTitleSQL, [book.title, book.type, book.author, book.topic, book.publicationdate])
+      .then((result) => result.rows[0])
+      .catch(console.error);
+  }
+
   function getAllFictionBooks() {
     const getFictionBooksSQL = `
   SELECT * FROM books
@@ -151,7 +197,10 @@ VALUES
     getAllNonFictionBooks,
     getNonFictionBooksByTopic,
     getAllBooksByAuthor,
-    getAllBooksByAuthorSorted
+    getAllBooksByAuthorSorted,
+    updateBookById
+    , deleteBookById
+    , updateBookByTitle
   }
 }
 
@@ -159,7 +208,5 @@ module.exports = Book;
 
 
 /*
-curl -X POST -H "Content-Type: application/json" \
--d '{"title": "bob goes to school", "type": "dogerbook", "author": "king doge", "topic": "types of Doge", "publicationDate":"2017-10-04"}' \
-http://localhost:3030/books
+curl -X DELETE http://localhost:3030/books/1
 */
